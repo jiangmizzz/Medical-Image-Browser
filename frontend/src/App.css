@@ -1,0 +1,73 @@
+body {
+    /* 避免横向溢出 */
+    /* overflow-x: scroll; */
+    background-color: rgb(230, 226, 218);
+}
+.main{
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+.app-header{
+    position: sticky;
+    top: 0px;
+    z-index: 1;
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2em 0 1em;
+    background-color: black;
+}
+.app-logo{
+    display: flex;
+    margin: 0.3em 0;
+}
+/* 构造渐变色边框，缺点是无法令背景透明 */
+.app-main-box{
+    border: solid 1px transparent;
+    /* border-radius: 10px; */
+    background-image: linear-gradient(#fff, #fff),
+    linear-gradient(to left, #4E7063, #E3E3E3, #9B8267);
+    background-origin: border-box;
+    background-clip: content-box, border-box;
+}
+/* 3个框内的最外层样式 */
+.app-item-main{
+    padding: 0.5em;
+    flex-grow: 1;
+    overflow: auto;
+    min-height: 0;
+}
+
+/* 修改滚动条样式 */
+::-webkit-scrollbar {
+    width: 0.5em;
+    height: 0.5em;
+  }
+  
+  ::-webkit-scrollbar-track {
+    display: none;
+    border-radius: 1em;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background-color: #b6b5b5;
+    border-radius: 1em;
+  }
+.swiper-pagination-bullet-active{
+    background-color: rgba(0,0,0,0.6) !important;
+}
+.swiper-pagination-bullet{
+    border: 1px solid white;
+}
+.swiper-pagination-bullets{
+    bottom: 0 !important;
+}
+h2, h5, h6{
+    font-family: 'Times New Roman'!important;
+}
+h4{
+    font-family: 'Avenir' !important;
+}

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import {Button, VStack} from "@chakra-ui/react";
+import {IconButton, VStack} from "@chakra-ui/react";
 import {AddIcon, MinusIcon} from "@chakra-ui/icons";
 
 interface ZoomControlProps {
@@ -21,8 +21,18 @@ const ZoomControl: React.FC<ZoomControlProps> = ({ initialZoom }) => {
 
   return (
     <VStack marginTop="10px">
-      <Button onClick={handleZoomIn} leftIcon={<AddIcon />} colorScheme="teal"></Button>
-      <Button onClick={handleZoomOut} leftIcon={<MinusIcon />} colorScheme="teal"></Button>
+      <IconButton 
+        aria-label='Zoom In'
+        onClick={handleZoomIn} 
+        icon={<AddIcon />} 
+        colorScheme="teal" 
+        />
+      <IconButton 
+        aria-label='Zoom Out'
+        onClick={handleZoomOut} 
+        icon={<MinusIcon />}
+        colorScheme="teal"
+        />
     </VStack>
   );
 };

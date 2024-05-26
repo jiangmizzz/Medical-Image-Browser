@@ -4,6 +4,8 @@ import "./assets/reset.css";
 import { Box, Center, Flex, Heading, VStack } from "@chakra-ui/react";
 // import { useState } from "react";
 
+import ZoomControl from "./components/ZoomControl";
+
 const boxCfg = {
   borderWidth: "1px",
   rounded: "md",
@@ -65,7 +67,9 @@ function App() {
           <Flex direction={"column"} {...boxCfg}>
             <BoxHeader title="Tools" position="r" />
             <VStack>
-              <div></div>
+              <div>
+                <ZoomControl initialZoom={1} />
+              </div>
             </VStack>
           </Flex>
         </Flex>

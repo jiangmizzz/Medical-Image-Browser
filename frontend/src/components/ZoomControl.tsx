@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import {IconButton, VStack} from "@chakra-ui/react";
-import {AddIcon, MinusIcon} from "@chakra-ui/icons";
+import {Icon} from "@chakra-ui/icons";
+
+import {ZoomInOutlined, ZoomOutOutlined} from "@ant-design/icons"
 
 interface ZoomControlProps {
-    initialZoom: number;
+    zoomLevel: number;
+    setZoomLevel: (z: number) => void;
 }
 
-const ZoomControl: React.FC<ZoomControlProps> = ({ initialZoom }) => {
-    const [zoomLevel, setZoomLevel] = useState(initialZoom);
+const ZoomControl: React.FC<ZoomControlProps> = ({ zoomLevel, setZoomLevel }) => {
 
     const handleZoomIn = () => {
         // 每次放大10%应该够吧
@@ -24,13 +26,13 @@ const ZoomControl: React.FC<ZoomControlProps> = ({ initialZoom }) => {
       <IconButton 
         aria-label='Zoom In'
         onClick={handleZoomIn} 
-        icon={<AddIcon />} 
+        icon={<Icon as={ZoomInOutlined}/>} 
         colorScheme="teal" 
         />
       <IconButton 
         aria-label='Zoom Out'
         onClick={handleZoomOut} 
-        icon={<MinusIcon />}
+        icon={<Icon as={ZoomOutOutlined}/>}
         colorScheme="teal"
         />
     </VStack>

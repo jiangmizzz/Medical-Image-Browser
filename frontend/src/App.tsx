@@ -2,9 +2,16 @@
 import "./App.css";
 import "./assets/reset.css";
 import { Box, Center, Flex, Heading, VStack } from "@chakra-ui/react";
-// import { useState } from "react";
+import { useState } from "react";
 
 import ZoomControl from "./components/ZoomControl";
+import ImageDisplay from "./components/ImageDisplay";
+import Move from "./components/Move";
+import Scroll from "./components/Scroll";
+import Tag from "./components/Tag";
+import Edit from "./components/Edit";
+import Reload from "./components/Reload";
+import Measure from "./components/Measure";
 
 const boxCfg = {
   borderWidth: "1px",
@@ -36,6 +43,7 @@ function BoxHeader(props: { title: string; position: "l" | "m" | "r" }) {
 }
 
 function App() {
+  const [zoomLevel, setZoomLevel] = useState(1);
   return (
     <>
       <Box className="main" bgColor={"gray.700"}>
@@ -60,15 +68,19 @@ function App() {
             {...boxCfg}
           >
             <BoxHeader title="Image Display Area" position="m" />
-            <VStack>
-              <div></div>
-            </VStack>
+            <ImageDisplay src="../../img/zju.png" zoomLevel={zoomLevel}/>
           </Flex>
           <Flex direction={"column"} {...boxCfg}>
             <BoxHeader title="Tools" position="r" />
             <VStack>
               <div>
-                <ZoomControl initialZoom={1} />
+                <ZoomControl zoomLevel={zoomLevel} setZoomLevel={setZoomLevel} />
+                <Move />
+                <Scroll />
+                <Tag />
+                <Edit />
+                <Reload />
+                <Measure />
               </div>
             </VStack>
           </Flex>

@@ -2,7 +2,12 @@
 import "./App.css";
 import "./assets/reset.css";
 import { Box, Center, Flex, Heading, VStack } from "@chakra-ui/react";
-// import { useState } from "react";
+import ImgDir from "./components/ImgDir";
+import { useFileStore } from "./stores/filesStore";
+import { useCountStore } from "./stores/countStore";
+import { useToast } from "@chakra-ui/react";
+import { useState } from "react";
+import { DirType } from "./vite-env";
 
 const boxCfg = {
   borderWidth: "1px",
@@ -34,6 +39,40 @@ function BoxHeader(props: { title: string; position: "l" | "m" | "r" }) {
 }
 
 function App() {
+  const fileStore = useFileStore();
+  const countStore = useCountStore();
+  const toast = useToast();
+  const [selectedDir, setSelected] = useState<DirType | null>(null);
+
+  //上传图片文件到 store 中
+  function handleUpload(imgs: string[]) {
+    fileStore.addDir({
+      dName: "ImgGroup " + countStore.increment(),
+      imgs: imgs,
+    });
+    toast({
+      title: "Imgs imported!",
+      description: "The group of images are imported successfully.",
+      status: "success",
+      variant: "subtle",
+      duration: 2000,
+      isClosable: true,
+    });
+  }
+
+  //删除一个图像组
+  function handleDelete(id: string) {
+    fileStore.deleteDir(id);
+    toast({
+      title: "Imgs Deleted!",
+      description: "The group of images are deleted successfully.",
+      status: "success",
+      variant: "subtle",
+      duration: 2000,
+      isClosable: true,
+    });
+  }
+
   return (
     <>
       <Box className="main" bgColor={"gray.700"}>
@@ -47,8 +86,34 @@ function App() {
         <Flex m={"0.5em"} flexGrow={1} gap={2} minH={0}>
           <Flex direction={"column"} {...boxCfg}>
             <BoxHeader title="Image Groups" position="l" />
-            <VStack minW={280}>
-              <div></div>
+            <VStack
+              w={280}
+              alignItems={"center"}
+              py={4}
+              overflowY={"auto"}
+              spacing={4}
+            >
+              {fileStore.dirs.map((dir) => {
+                return (
+                  <ImgDir
+                    key={dir.id}
+                    id={dir.id}
+                    dName={dir.dName}
+                    type="img"
+                    cover={dir.imgs[0]}
+                    imgNum={dir.imgs.length}
+                    isSelected={
+                      selectedDir !== null && dir.id === selectedDir.id
+                    }
+                    onSelect={() => {
+                      setSelected({ ...dir });
+                    }}
+                    onDelete={() => handleDelete(dir.id)}
+                  />
+                );
+              })}
+
+              <ImgDir type="add" onUpload={(imgs) => handleUpload(imgs)} />
             </VStack>
           </Flex>
           <Flex

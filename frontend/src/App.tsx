@@ -45,8 +45,7 @@ function BoxHeader(props: { title: string; position: "l" | "m" | "r" }) {
 function App() {
   const [zoomLevel, setZoomLevel] = useState(1);
   const handleCrop = (croppedArea: { x: number; y: number; width: number; height: number }) => {
-    console.log('Cropped area:', croppedArea);
-    // 其他处理，看您干嘛x
+    // 以后要加的操作
   };
   return (
     <>
@@ -73,6 +72,7 @@ function App() {
           >
             <BoxHeader title="Image Display Area" position="m" />
             <CropperComponent 
+              zoomLevel={zoomLevel}
               src="../../img/zju.png"
               aspectRatio={1}
               onCrop={handleCrop} 

@@ -4,14 +4,16 @@ import 'cropperjs/dist/cropper.css';
 import Cropper from 'cropperjs';
 
 interface CropperComponentProps {
+    zoomLevel: number;
     src: string;
     aspectRatio?: number;
     onCrop?: (croppedArea: { x: number; y: number; width: number; height: number }) => void;
 }
 
-const CropperComponent: React.FC<CropperComponentProps> = ({ src, aspectRatio, onCrop }) => {
+const CropperComponent: React.FC<CropperComponentProps> = ({ zoomLevel, src, aspectRatio, onCrop }) => {
     const imageRef = useRef<HTMLImageElement>(null);
-    const [, setCropper] = useState<Cropper | null>(null);
+    const [lastZoomLevel, setLastZoomLevel] = useState<number>(1);
+    const [cropperInstance, setCropperInstance] = useState<Cropper | null>(null);
 
     useEffect(() => {
         if (imageRef.current) {
@@ -25,27 +27,39 @@ const CropperComponent: React.FC<CropperComponentProps> = ({ src, aspectRatio, o
             background: false,
             center: false,
             autoCrop: false,
-            crop(event) {
-                if (onCrop) {
-                    const { x, y, width, height } = event.detail;
-                    onCrop({ x, y, width, height });
-                }
-            },
+            autoCropArea: 1,
+            viewMode: 0
         });
 
-        setCropper(newCropper);
+        setCropperInstance(newCropper);
+        setLastZoomLevel(zoomLevel);
+
         return () => {
             if (newCropper) {
             newCropper.destroy();
-            setCropper(null);
+            setCropperInstance(null);
             }
         };
         }
-    }, [src, aspectRatio, onCrop]);
+    }, [src]);
 
+    useEffect(() => {
+        if (cropperInstance && zoomLevel !== undefined) {
+            cropperInstance.zoom(zoomLevel-lastZoomLevel);
+            setLastZoomLevel(zoomLevel)
+        }
+      }, [zoomLevel]);
   return (
-    <Box>
-      <img ref={imageRef} src={src} alt="Cropper" style={{ display: 'none' }} />
+    <Box
+        flexGrow={1}
+        >
+      <img 
+        ref={imageRef} 
+        src={src} 
+        alt="Cropper" 
+        style={{ 
+            display: 'none',
+            }} />
     </Box>
   );
 };

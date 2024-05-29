@@ -43,7 +43,7 @@ body {
 
 /* 修改滚动条样式 */
 ::-webkit-scrollbar {
-    width: 0.5em;
+    width: 0.4em;
     height: 0.5em;
   }
   
@@ -53,7 +53,7 @@ body {
   }
   
   ::-webkit-scrollbar-thumb {
-    background-color: #b6b5b5;
+    background-color: #69717c;
     border-radius: 1em;
   }
 .swiper-pagination-bullet-active{

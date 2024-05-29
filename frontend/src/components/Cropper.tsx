@@ -1,6 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { Box, IconButton } from '@chakra-ui/react';
-import {DragHandleIcon} from '@chakra-ui/icons';
+import { Box } from '@chakra-ui/react';
 import 'cropperjs/dist/cropper.css';
 import Cropper from 'cropperjs';
 
@@ -12,7 +11,7 @@ interface CropperComponentProps {
 
 const CropperComponent: React.FC<CropperComponentProps> = ({ src, aspectRatio, onCrop }) => {
     const imageRef = useRef<HTMLImageElement>(null);
-    const [cropper, setCropper] = useState<Cropper | null>(null);
+    const [, setCropper] = useState<Cropper | null>(null);
 
     useEffect(() => {
         if (imageRef.current) {

@@ -5,7 +5,6 @@ import { Box, Center, Flex, Heading, VStack } from "@chakra-ui/react";
 import { useState } from "react";
 
 import ZoomControl from "./components/ZoomControl";
-import ImageDisplay from "./components/ImageDisplay";
 import Move from "./components/Drag";
 import Scroll from "./components/Scroll";
 import Tag from "./components/Tag";

@@ -51,7 +51,7 @@ export default function ImgDir(props: ImgDirProps | AddProps) {
         borderRadius={"md"}
         borderColor={props.isSelected ? "teal.100" : "gray.600"}
         bgColor={"blackAlpha.400"}
-        columnGap={1}
+        rowGap={1}
         cursor={"pointer"}
         _hover={{
           borderColor: props.isSelected ? "teal.100" : "gray.300",
@@ -68,7 +68,7 @@ export default function ImgDir(props: ImgDirProps | AddProps) {
             rounded={"full"}
             size={"sm"}
             ml={-6}
-            mt={-6}
+            mt={-7}
             opacity={0.6}
             onClick={(e) => {
               e.stopPropagation();

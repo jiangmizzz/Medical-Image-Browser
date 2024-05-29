@@ -6,12 +6,13 @@ import { useState } from "react";
 
 import ZoomControl from "./components/ZoomControl";
 import ImageDisplay from "./components/ImageDisplay";
-import Move from "./components/Move";
+import Move from "./components/Drag";
 import Scroll from "./components/Scroll";
 import Tag from "./components/Tag";
 import Edit from "./components/Edit";
 import Reload from "./components/Reload";
 import Measure from "./components/Measure";
+import CropperComponent from "./components/Cropper";
 
 const boxCfg = {
   borderWidth: "1px",
@@ -44,6 +45,10 @@ function BoxHeader(props: { title: string; position: "l" | "m" | "r" }) {
 
 function App() {
   const [zoomLevel, setZoomLevel] = useState(1);
+  const handleCrop = (croppedArea: { x: number; y: number; width: number; height: number }) => {
+    console.log('Cropped area:', croppedArea);
+    // 其他处理，看您干嘛x
+  };
   return (
     <>
       <Box className="main" bgColor={"gray.700"}>
@@ -68,7 +73,11 @@ function App() {
             {...boxCfg}
           >
             <BoxHeader title="Image Display Area" position="m" />
-            <ImageDisplay src="../../img/zju.png" zoomLevel={zoomLevel}/>
+            <CropperComponent 
+              src="../../img/zju.png"
+              aspectRatio={1}
+              onCrop={handleCrop} 
+            />
           </Flex>
           <Flex direction={"column"} {...boxCfg}>
             <BoxHeader title="Tools" position="r" />

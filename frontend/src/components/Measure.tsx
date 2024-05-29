@@ -6,7 +6,7 @@ const Measure: React.FC = () => {
     return (
         <Box>
             <IconButton 
-            aria-label='Move'
+            aria-label='Measure'
             icon={<Icon as={MenuOutlined} />}
             colorScheme="teal"
             marginTop="8px"

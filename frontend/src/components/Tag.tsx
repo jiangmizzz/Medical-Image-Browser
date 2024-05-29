@@ -6,7 +6,7 @@ const Tag: React.FC = () => {
     return (
         <Box>
             <IconButton 
-            aria-label='Scroll'
+            aria-label='Tag'
             icon={<Icon as={TagOutlined} />}
             colorScheme="teal"
             marginTop="8px"

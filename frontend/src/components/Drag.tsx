@@ -2,11 +2,11 @@ import {DragOutlined} from "@ant-design/icons"
 import {Box, IconButton} from "@chakra-ui/react"
 import {Icon} from "@chakra-ui/icons"
 
-const Move: React.FC = () => {
+const Drag: React.FC = () => {
     return (
         <Box>
             <IconButton 
-            aria-label='Move'
+            aria-label='Drag'
             icon={<Icon as={DragOutlined} />}
             colorScheme="teal"
             marginTop="8px"
@@ -15,4 +15,4 @@ const Move: React.FC = () => {
     )
 }
 
-export default Move;
+export default Drag;

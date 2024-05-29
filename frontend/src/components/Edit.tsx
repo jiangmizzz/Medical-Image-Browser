@@ -6,7 +6,7 @@ const Edit: React.FC = () => {
     return (
         <Box>
             <IconButton 
-            aria-label='Scroll'
+            aria-label='Edit'
             icon={<Icon as={EditOutlined} />}
             colorScheme="teal"
             marginTop="8px"

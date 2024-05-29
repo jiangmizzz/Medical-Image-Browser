@@ -6,7 +6,7 @@ const Reload: React.FC = () => {
     return (
         <Box>
             <IconButton 
-            aria-label='Move'
+            aria-label='Reload'
             icon={<Icon as={ReloadOutlined} />}
             colorScheme="teal"
             marginTop="8px"

@@ -1,20 +1,34 @@
 // import { useState } from "react";
 import "./App.css";
 import "./assets/reset.css";
-import { Box, Center, Flex, Heading, VStack } from "@chakra-ui/react";
+import {
+  Box,
+  Center,
+  Flex,
+  HStack,
+  Heading,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
 import ImgDir from "./components/ImgDir";
 import { useFileStore } from "./stores/filesStore";
 import { useCountStore } from "./stores/countStore";
 import { useToast } from "@chakra-ui/react";
 import { useState } from "react";
 import { DirType } from "./vite-env";
+import ImgWindow from "./components/ImgWindow";
+import { Empty } from "@douyinfe/semi-ui";
+import {
+  IllustrationNoContent,
+  IllustrationNoContentDark,
+} from "@douyinfe/semi-illustrations";
 
 const boxCfg = {
   borderWidth: "1px",
   rounded: "md",
   boxShadow: "base",
   overflow: "hidden",
-  fontFamily: "Times New Roman",
+  fontFamily: "Arial",
 };
 
 function BoxHeader(props: { title: string; position: "l" | "m" | "r" }) {
@@ -56,6 +70,7 @@ function App() {
       status: "success",
       variant: "subtle",
       duration: 2000,
+      position: "top",
       isClosable: true,
     });
   }
@@ -69,6 +84,7 @@ function App() {
       status: "success",
       variant: "subtle",
       duration: 2000,
+      position: "top",
       isClosable: true,
     });
   }
@@ -123,9 +139,32 @@ function App() {
             {...boxCfg}
           >
             <BoxHeader title="Image Display Area" position="m" />
-            <VStack>
-              <div></div>
-            </VStack>
+            {/* TODO: 未来可以支持多种布局，如并列、网格... */}
+            <HStack
+              w={"100%"}
+              h={"calc(100% - 2em)"}
+              justifyContent={"center"}
+              alignItems={"center"}
+              fontFamily={"Arial"}
+            >
+              {selectedDir === null ? (
+                <Empty
+                  image={
+                    <IllustrationNoContent
+                      style={{ width: 150, height: 150 }}
+                    />
+                  }
+                  darkModeImage={
+                    <IllustrationNoContentDark
+                      style={{ width: 150, height: 150 }}
+                    />
+                  }
+                  description={<Text color={"gray.300"}> No Images Yet</Text>}
+                />
+              ) : (
+                <ImgWindow {...selectedDir} />
+              )}
+            </HStack>
           </Flex>
           <Flex direction={"column"} {...boxCfg}>
             <BoxHeader title="Tools" position="r" />

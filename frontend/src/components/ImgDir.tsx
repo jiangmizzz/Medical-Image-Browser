@@ -32,15 +32,39 @@ interface AddProps {
 
 export default function ImgDir(props: ImgDirProps | AddProps) {
   const [showClose, setShowClose] = useState<boolean>(false);
-  const [imgArray, setImgArray] = useState<string[]>([]); //图片列表
+  const [imgArray, setImgArray] = useState<
+    {
+      order: number;
+      img: string;
+    }[]
+  >([]); //图片列表
   const [isPreview, setPreview] = useState<boolean>(false);
 
-  // 依次处理上传的图片文件
+  // 依次处理上传的图片文件，基于文件名排序
   const handleUpload = ({ file }: { file: FileItem }) => {
+    const order: number = parseInt(file.name.match(/=(\d+)\./)![1], 10);
     setImgArray((prevImgs) => {
-      return [...prevImgs, file.url!];
+      return [...prevImgs, { order: order, img: file.url! }];
     });
   };
+
+  // 添加文件夹
+  function handleAdd() {
+    if (props.type === "add") {
+      const sortedImgs = imgArray.sort((a, b) => {
+        if (a.order < b.order) {
+          return -1;
+        }
+        if (a.order > b.order) {
+          return 1;
+        }
+        return 0;
+      });
+      //转化成 string[]
+      props.onUpload(sortedImgs.map((file) => file.img));
+      setImgArray([]);
+    }
+  }
 
   if (props.type === "img")
     return (
@@ -51,7 +75,7 @@ export default function ImgDir(props: ImgDirProps | AddProps) {
         borderRadius={"md"}
         borderColor={props.isSelected ? "teal.100" : "gray.600"}
         bgColor={"blackAlpha.400"}
-        columnGap={1}
+        rowGap={1}
         cursor={"pointer"}
         _hover={{
           borderColor: props.isSelected ? "teal.100" : "gray.300",
@@ -68,7 +92,7 @@ export default function ImgDir(props: ImgDirProps | AddProps) {
             rounded={"full"}
             size={"sm"}
             ml={-6}
-            mt={-6}
+            mt={-7}
             opacity={0.6}
             onClick={(e) => {
               e.stopPropagation();
@@ -136,7 +160,7 @@ export default function ImgDir(props: ImgDirProps | AddProps) {
                 <HStack onClick={(e) => e.stopPropagation()}>
                   <VStack>
                     <ImagePreview
-                      src={imgArray}
+                      src={imgArray.map((file) => file.img)}
                       visible={isPreview}
                       onVisibleChange={(v) => setPreview(v)}
                     >
@@ -144,7 +168,7 @@ export default function ImgDir(props: ImgDirProps | AddProps) {
                         w={100}
                         h={100}
                         objectFit={"contain"}
-                        src={imgArray[0]}
+                        src={imgArray[0].img}
                         onClick={() => setPreview(true)}
                       />
                     </ImagePreview>
@@ -154,10 +178,7 @@ export default function ImgDir(props: ImgDirProps | AddProps) {
                     <Button
                       colorScheme="teal"
                       size={"sm"}
-                      onClick={() => {
-                        props.onUpload(imgArray);
-                        setImgArray([]);
-                      }} //确认上传
+                      onClick={handleAdd} //确认上传
                     >
                       确定
                     </Button>

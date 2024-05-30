@@ -5,7 +5,6 @@ import { Box, Center, Flex, Heading, VStack } from "@chakra-ui/react";
 import { useState } from "react";
 
 import ZoomControl from "./components/ZoomControl";
-import Move from "./components/Drag";
 import Scroll from "./components/Scroll";
 import Tag from "./components/Tag";
 import Edit from "./components/Edit";
@@ -138,7 +137,7 @@ function App() {
             <BoxHeader title="Image Display Area" position="m" />
             <CropperComponent 
               zoomLevel={zoomLevel}
-              src="../../img/zju.png"
+              dir={selectedDir}
               aspectRatio={1}
               onCrop={handleCrop} 
             />
@@ -148,7 +147,6 @@ function App() {
             <VStack>
               <div>
                 <ZoomControl zoomLevel={zoomLevel} setZoomLevel={setZoomLevel} />
-                <Move />
                 <Scroll />
                 <Tag />
                 <Edit />

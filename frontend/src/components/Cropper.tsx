@@ -2,18 +2,20 @@ import React, { useRef, useEffect, useState } from 'react';
 import { Box } from '@chakra-ui/react';
 import 'cropperjs/dist/cropper.css';
 import Cropper from 'cropperjs';
+import { DirType } from '../vite-env';
 
 interface CropperComponentProps {
     zoomLevel: number;
-    src: string;
+    dir: DirType|null;
     aspectRatio?: number;
     onCrop?: (croppedArea: { x: number; y: number; width: number; height: number }) => void;
 }
 
-const CropperComponent: React.FC<CropperComponentProps> = ({ zoomLevel, src, aspectRatio, onCrop }) => {
+const CropperComponent: React.FC<CropperComponentProps> = ({ zoomLevel, dir, aspectRatio, onCrop }) => {
     const imageRef = useRef<HTMLImageElement>(null);
     const [lastZoomLevel, setLastZoomLevel] = useState<number>(1);
     const [cropperInstance, setCropperInstance] = useState<Cropper | null>(null);
+    const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
 
     useEffect(() => {
         if (imageRef.current) {
@@ -41,27 +43,39 @@ const CropperComponent: React.FC<CropperComponentProps> = ({ zoomLevel, src, asp
             }
         };
         }
-    }, [src]);
+    }, [dir]);
 
     useEffect(() => {
         if (cropperInstance && zoomLevel !== undefined) {
             cropperInstance.zoom(zoomLevel-lastZoomLevel);
             setLastZoomLevel(zoomLevel)
         }
-      }, [zoomLevel]);
-  return (
-    <Box
-        flexGrow={1}
-        >
-      <img 
-        ref={imageRef} 
-        src={src} 
-        alt="Cropper" 
-        style={{ 
-            display: 'none',
-            }} />
-    </Box>
-  );
+    }, [zoomLevel]);
+
+    if (dir === null) {
+        <Box flexGrow={1}>
+        <img 
+            ref={imageRef} 
+            src="../img/zju.png" 
+            alt="Cropper" 
+            style={{ 
+                display: 'none',
+                }} />
+        </Box>
+    } else {
+        return (
+            <Box flexGrow={1}>
+            <img 
+                ref={imageRef} 
+                src={dir.imgs[currentImageIndex]} 
+                alt="Cropper" 
+                style={{ 
+                    display: 'none',
+                }} 
+            />
+            </Box>
+        );
+    }
 };
 
 export default CropperComponent;

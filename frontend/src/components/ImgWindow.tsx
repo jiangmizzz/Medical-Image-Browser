@@ -88,8 +88,8 @@ export default function ImgWindow(props: ImgWindowProps) {
             bg="blue.500"
             color="white"
             mt="-10"
-            ml="-5"
-            w="12"
+            ml="-7"
+            px={3}
             borderRadius={"sm"}
           >
             {page + "/" + props.imgs.length}

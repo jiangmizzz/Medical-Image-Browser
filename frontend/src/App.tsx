@@ -5,12 +5,10 @@ import { Box, Center, Flex, Heading, VStack, HStack, Text } from "@chakra-ui/rea
 import { useState } from "react";
 
 import ZoomControl from "./components/ZoomControl";
-import Scroll from "./components/Scroll";
 import Tag from "./components/Tag";
 import Edit from "./components/Edit";
 import Reload from "./components/Reload";
 import Measure from "./components/Measure";
-import CropperComponent from "./components/Cropper";
 import ImgDir from "./components/ImgDir";
 import { useFileStore } from "./stores/filesStore";
 import { useCountStore } from "./stores/countStore";
@@ -54,9 +52,6 @@ function BoxHeader(props: { title: string; position: "l" | "m" | "r" }) {
 
 function App() {
   const [zoomLevel, setZoomLevel] = useState(1);
-  const handleCrop = (croppedArea: { x: number; y: number; width: number; height: number }) => {
-    // 以后要加的操作
-  };
 
   const fileStore = useFileStore();
   const countStore = useCountStore();
@@ -166,22 +161,15 @@ function App() {
                   description={<Text color={"gray.300"}> No Images Yet</Text>}
                 />
               ) : (
-                <ImgWindow {...selectedDir} />
+                <ImgWindow {...selectedDir} zoomLevel={zoomLevel} />
               )}
             </HStack>
-            <CropperComponent 
-              zoomLevel={zoomLevel}
-              dir={selectedDir}
-              aspectRatio={1}
-              onCrop={handleCrop} 
-            />
           </Flex>
           <Flex direction={"column"} {...boxCfg}>
             <BoxHeader title="Tools" position="r" />
             <VStack>
               <div>
                 <ZoomControl zoomLevel={zoomLevel} setZoomLevel={setZoomLevel} />
-                <Scroll />
                 <Tag />
                 <Edit />
                 <Reload />

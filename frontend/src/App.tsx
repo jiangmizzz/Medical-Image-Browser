@@ -1,7 +1,15 @@
 // import { useState } from "react";
 import "./App.css";
 import "./assets/reset.css";
-import { Box, Center, Flex, Heading, VStack, HStack, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Center,
+  Flex,
+  Heading,
+  VStack,
+  HStack,
+  Text,
+} from "@chakra-ui/react";
 import { useState } from "react";
 
 import ZoomControl from "./components/ZoomControl";
@@ -52,6 +60,7 @@ function BoxHeader(props: { title: string; position: "l" | "m" | "r" }) {
 
 function App() {
   const [zoomLevel, setZoomLevel] = useState(1);
+  const [reload, setReload] = useState(true);
 
   const fileStore = useFileStore();
   const countStore = useCountStore();
@@ -161,7 +170,11 @@ function App() {
                   description={<Text color={"gray.300"}> No Images Yet</Text>}
                 />
               ) : (
-                <ImgWindow {...selectedDir} zoomLevel={zoomLevel} />
+                <ImgWindow
+                  {...selectedDir}
+                  zoomLevel={zoomLevel}
+                  reload={reload}
+                />
               )}
             </HStack>
           </Flex>
@@ -169,10 +182,13 @@ function App() {
             <BoxHeader title="Tools" position="r" />
             <VStack>
               <div>
-                <ZoomControl zoomLevel={zoomLevel} setZoomLevel={setZoomLevel} />
+                <ZoomControl
+                  zoomLevel={zoomLevel}
+                  setZoomLevel={setZoomLevel}
+                />
+                <Reload reload={reload} setReload={setReload} />
                 <Tag />
                 <Edit />
-                <Reload />
                 <Measure />
               </div>
             </VStack>

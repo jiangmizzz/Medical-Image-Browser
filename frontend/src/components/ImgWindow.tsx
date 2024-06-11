@@ -7,8 +7,8 @@ import {
   SliderMark,
 } from "@chakra-ui/react";
 import { useEffect, useState, useRef } from "react";
-import 'cropperjs/dist/cropper.css';
-import Cropper from 'cropperjs';
+import "cropperjs/dist/cropper.css";
+import Cropper from "cropperjs";
 
 //预设颜色
 ///* TODO: 未来可以支持多种布局，如并列、网格... 相应改样式并分配不同的框色*/
@@ -27,53 +27,53 @@ interface ImgWindowProps {
   dName: string;
   imgs: string[];
   zoomLevel: number;
+  reload: boolean;
 }
-
 
 export default function ImgWindow(props: ImgWindowProps) {
   const imageRef = useRef<HTMLImageElement>(null);
-    const [lastZoomLevel, setLastZoomLevel] = useState<number>(1);
-    const [cropperInstance, setCropperInstance] = useState<Cropper | null>(null);
-  
+  const [lastZoomLevel, setLastZoomLevel] = useState<number>(1);
+  const [cropperInstance, setCropperInstance] = useState<Cropper | null>(null);
+
   const [page, setPage] = useState(1);
   useEffect(() => {
     setPage(1);
-  }, [props.id]);
+  }, [props.id, props.reload]);
 
   useEffect(() => {
     if (imageRef.current) {
       const newCropper = new Cropper(imageRef.current, {
-          aspectRatio: 1,
-          dragMode: 'move',
-          cropBoxMovable: false,
-          modal: false,
-          guides: false,
-          highlight: false,
-          background: false,
-          center: false,
-          autoCrop: false,
-          autoCropArea: 1,
-          viewMode: 0
+        aspectRatio: 1,
+        dragMode: "move",
+        cropBoxMovable: false,
+        modal: false,
+        guides: false,
+        highlight: false,
+        background: false,
+        center: false,
+        autoCrop: false,
+        autoCropArea: 1,
+        viewMode: 0,
       });
 
       setCropperInstance(newCropper);
       setLastZoomLevel(props.zoomLevel);
 
       return () => {
-          if (newCropper) {
+        if (newCropper) {
           newCropper.destroy();
           setCropperInstance(null);
-          }
+        }
       };
-      }
-  }, [page, props.id]);
+    }
+  }, [page, props.id, props.reload]);
 
   useEffect(() => {
     if (cropperInstance && props.zoomLevel !== undefined) {
-        cropperInstance.zoom(props.zoomLevel-lastZoomLevel);
-        setLastZoomLevel(props.zoomLevel)
+      cropperInstance.zoom(props.zoomLevel - lastZoomLevel);
+      setLastZoomLevel(props.zoomLevel);
     }
-}, [props.zoomLevel]);
+  }, [props.zoomLevel]);
 
   return (
     <Flex
@@ -89,6 +89,7 @@ export default function ImgWindow(props: ImgWindowProps) {
       columnGap={3}
       alignItems={"center"}
       overflowY={"auto"}
+      overflowX={"hidden"}
     >
       <Box
         position={"relative"}
@@ -113,11 +114,11 @@ export default function ImgWindow(props: ImgWindowProps) {
         minH={0}
         objectFit={"contain"}
         src={props.imgs[page - 1]}
-        ref={imageRef} 
-        alt="Cropper" 
-        style={{ 
-            display: 'none',
-        }} 
+        ref={imageRef}
+        alt="Cropper"
+        style={{
+          display: "none",
+        }}
       />
       <Flex flex={1} w={"100%"} justify={"center"} align={"end"}>
         {/* <Tag justifySelf={"start"}>{props.dName}</Tag> */}

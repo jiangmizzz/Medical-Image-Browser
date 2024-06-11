@@ -5,16 +5,22 @@ import {
   Box,
   Center,
   Flex,
-  HStack,
   Heading,
-  Text,
   VStack,
+  HStack,
+  Text,
 } from "@chakra-ui/react";
+import { useState } from "react";
+
+import ZoomControl from "./components/ZoomControl";
+import Tag from "./components/Tag";
+import Edit from "./components/Edit";
+import Reload from "./components/Reload";
+import Measure from "./components/Measure";
 import ImgDir from "./components/ImgDir";
 import { useFileStore } from "./stores/filesStore";
 import { useCountStore } from "./stores/countStore";
 import { useToast } from "@chakra-ui/react";
-import { useState } from "react";
 import { DirType } from "./vite-env";
 import ImgWindow from "./components/ImgWindow";
 import { Empty } from "@douyinfe/semi-ui";
@@ -53,6 +59,9 @@ function BoxHeader(props: { title: string; position: "l" | "m" | "r" }) {
 }
 
 function App() {
+  const [zoomLevel, setZoomLevel] = useState(1);
+  const [reload, setReload] = useState(true);
+
   const fileStore = useFileStore();
   const countStore = useCountStore();
   const toast = useToast();
@@ -88,7 +97,6 @@ function App() {
       isClosable: true,
     });
   }
-
   return (
     <>
       <Box className="main" bgColor={"gray.700"}>
@@ -162,14 +170,27 @@ function App() {
                   description={<Text color={"gray.300"}> No Images Yet</Text>}
                 />
               ) : (
-                <ImgWindow {...selectedDir} />
+                <ImgWindow
+                  {...selectedDir}
+                  zoomLevel={zoomLevel}
+                  reload={reload}
+                />
               )}
             </HStack>
           </Flex>
           <Flex direction={"column"} {...boxCfg}>
             <BoxHeader title="Tools" position="r" />
             <VStack>
-              <div></div>
+              <div>
+                <ZoomControl
+                  zoomLevel={zoomLevel}
+                  setZoomLevel={setZoomLevel}
+                />
+                <Reload reload={reload} setReload={setReload} />
+                <Tag />
+                <Edit />
+                <Measure />
+              </div>
             </VStack>
           </Flex>
         </Flex>

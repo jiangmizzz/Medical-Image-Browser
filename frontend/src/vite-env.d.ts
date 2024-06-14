@@ -5,6 +5,7 @@ export interface DirsState {
   dirs: DirType[];
   addDir: (newDir: Omit<DirType, "id">) => string; //返回新添加的图片组的id
   deleteDir: (id: string) => void;
+  editDName: (id: string, newName: string) => void;
 }
 
 // 一组图片

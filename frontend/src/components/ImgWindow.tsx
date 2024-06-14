@@ -88,11 +88,12 @@ export default function ImgWindow(props: ImgWindowProps) {
       h={"90%"}
       columnGap={3}
       alignItems={"center"}
-      overflowY={"auto"}
-      overflowX={"hidden"}
+      // overflowY={"auto"}
+      // overflowX={"hidden"}
     >
       <Box
         position={"relative"}
+        zIndex={10}
         alignSelf={"start"}
         borderRadius={"md"}
         bgColor={"blackAlpha.300"}
@@ -103,24 +104,33 @@ export default function ImgWindow(props: ImgWindowProps) {
         alignItems={"center"}
         px={2}
       >
-        <Text as={"b"} color={"whiteAlpha.700"} ml={2}>
+        <Text as={"b"} color={"whiteAlpha.700"}>
           {props.dName}
         </Text>
       </Box>
+      <Box w={"90%"} h={"90%"}>
+        <Image
+          minH={0}
+          objectFit={"contain"}
+          src={props.imgs[page - 1]}
+          ref={imageRef}
+          alt="Cropper"
+          position={"relative"}
+          zIndex={5}
+          // style={{
+          //   display: "none",
+          // }}
+        />
+      </Box>
 
-      <Image
+      <Flex
+        flex={1}
         w={"100%"}
-        h={"90%"}
-        minH={0}
-        objectFit={"contain"}
-        src={props.imgs[page - 1]}
-        ref={imageRef}
-        alt="Cropper"
-        style={{
-          display: "none",
-        }}
-      />
-      <Flex flex={1} w={"100%"} justify={"center"} align={"end"}>
+        justify={"center"}
+        align={"end"}
+        position={"relative"}
+        zIndex={10}
+      >
         {/* <Tag justifySelf={"start"}>{props.dName}</Tag> */}
         <Slider
           aria-label="page-slider"

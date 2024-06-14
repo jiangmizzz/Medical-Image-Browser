@@ -21,4 +21,18 @@ export const useFileStore = create<DirsState>((set, get) => ({
       }));
     }
   },
+  editDName: (id: string, newName: string) => {
+    const idx = get().dirs.findIndex((dir) => dir.id === id);
+    if (idx >= 0) {
+      set((prevState) => ({
+        dirs: prevState.dirs.map((dir, id) => {
+          if (id === idx) {
+            return { ...dir, dName: newName };
+          } else {
+            return { ...dir };
+          }
+        }),
+      }));
+    }
+  },
 }));

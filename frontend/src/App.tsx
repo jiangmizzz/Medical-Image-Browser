@@ -9,6 +9,12 @@ import {
   VStack,
   HStack,
   Text,
+  Grid,
+  GridItem,
+  Divider,
+  AspectRatio,
+  ButtonGroup,
+  IconButton,
 } from "@chakra-ui/react";
 import { useState } from "react";
 
@@ -23,11 +29,13 @@ import { useCountStore } from "./stores/countStore";
 import { useToast } from "@chakra-ui/react";
 import { DirType } from "./vite-env";
 import ImgWindow from "./components/ImgWindow";
-import { Empty } from "@douyinfe/semi-ui";
+import { Empty, Image, Upload } from "@douyinfe/semi-ui";
 import {
   IllustrationNoContent,
   IllustrationNoContentDark,
 } from "@douyinfe/semi-illustrations";
+import { IconCamera, IconGridView, IconStop } from "@douyinfe/semi-icons";
+import type { FileItem } from "@douyinfe/semi-ui/lib/es/upload";
 
 const boxCfg = {
   borderWidth: "1px",
@@ -37,7 +45,20 @@ const boxCfg = {
   fontFamily: "Arial",
 };
 
-function BoxHeader(props: { title: string; position: "l" | "m" | "r" }) {
+type ModeType = "single" | "grid";
+
+function BoxHeader(
+  props: {
+    title: string;
+  } & (
+    | { position: "l" | "r" }
+    | {
+        position: "m";
+        mode: ModeType;
+        changeMode: (mode: ModeType) => void;
+      }
+  )
+) {
   return (
     <Center
       //*需要将h改为minH，否则header部分高度会被下方内容压窄
@@ -54,6 +75,34 @@ function BoxHeader(props: { title: string; position: "l" | "m" | "r" }) {
       >
         {props.title}
       </Heading>
+      {props.position === "m" && (
+        <ButtonGroup
+          // size="sm"
+          isAttached
+          variant="outline"
+          opacity={0.7}
+          ml={5}
+        >
+          <IconButton
+            aria-label="single mode"
+            maxH={"1.5em"}
+            isActive={props.mode === "single"}
+            icon={<IconStop />}
+            onClick={() => {
+              if (props.mode !== "single") props.changeMode("single");
+            }}
+          />
+          <IconButton
+            aria-label="grid mode"
+            maxH={"1.5em"}
+            isActive={props.mode === "grid"}
+            icon={<IconGridView />}
+            onClick={() => {
+              if (props.mode !== "grid") props.changeMode("grid");
+            }}
+          />
+        </ButtonGroup>
+      )}
     </Center>
   );
 }
@@ -66,6 +115,8 @@ function App() {
   const countStore = useCountStore();
   const toast = useToast();
   const [selectedDir, setSelected] = useState<DirType | null>(null);
+  const [rtSample, setRtSample] = useState<string | null>(null); //实时样本图片
+  const [displayMode, setMode] = useState<ModeType>("single");
 
   //上传图片文件到 store 中
   function handleUpload(imgs: string[]) {
@@ -97,6 +148,14 @@ function App() {
       isClosable: true,
     });
   }
+
+  //添加实时样本图
+  const addSample = ({ file }: { file: FileItem }) => {
+    //@ts-expect-error File extends Blob
+    const url = URL.createObjectURL(file.fileInstance);
+    setRtSample(url);
+  };
+
   return (
     <>
       <Box className="main" bgColor={"gray.700"}>
@@ -133,6 +192,9 @@ function App() {
                       setSelected({ ...dir });
                     }}
                     onDelete={() => handleDelete(dir.id)}
+                    onEditDName={(newName) => {
+                      fileStore.editDName(dir.id, newName);
+                    }}
                   />
                 );
               })}
@@ -146,8 +208,13 @@ function App() {
             direction={"column"}
             {...boxCfg}
           >
-            <BoxHeader title="Image Display Area" position="m" />
-            {/* TODO: 未来可以支持多种布局，如并列、网格... */}
+            <BoxHeader
+              title="Image Display Area"
+              position="m"
+              mode={displayMode}
+              changeMode={(mode) => setMode(mode)}
+            />
+            {/* TODO: 未来可以支持四格布局*/}
             <HStack
               w={"100%"}
               h={"calc(100% - 2em)"}
@@ -180,17 +247,79 @@ function App() {
           </Flex>
           <Flex direction={"column"} {...boxCfg}>
             <BoxHeader title="Tools" position="r" />
-            <VStack>
-              <div>
+            <Grid
+              templateColumns={"repeat(3, 1fr)"}
+              justifyItems={"center"}
+              gap={2}
+              minW={200}
+              my={8}
+              mx={5}
+            >
+              <GridItem colSpan={2}>
                 <ZoomControl
                   zoomLevel={zoomLevel}
                   setZoomLevel={setZoomLevel}
                 />
-                <Reload reload={reload} setReload={setReload} />
-                <Tag />
-                <Edit />
-                <Measure />
-              </div>
+              </GridItem>
+              <Reload reload={reload} setReload={setReload} />
+              <Tag />
+              <Edit />
+              <Measure />
+            </Grid>
+            <Divider />
+            <VStack>
+              <Center bg={"whiteAlpha.400"} w={"100%"} minH={"2em"}>
+                <Heading
+                  as="h4"
+                  size={"md"}
+                  whiteSpace={"nowrap"}
+                  color="white"
+                >
+                  {"Real-time Sample"}
+                </Heading>
+              </Center>
+
+              <AspectRatio width={200} ratio={4 / 3} mt={5}>
+                {rtSample === null ? (
+                  <Upload
+                    action=""
+                    accept="image/*"
+                    showUploadList={false}
+                    customRequest={addSample}
+                  >
+                    <AspectRatio width={200} ratio={4 / 3}>
+                      <Flex
+                        justifyContent={"center"}
+                        borderWidth={2}
+                        borderRadius={"md"}
+                        borderColor={"gray.600"}
+                        bgColor={"blackAlpha.500"}
+                      >
+                        <IconCamera
+                          size="extra-large"
+                          style={{ color: "#718096" }}
+                        />
+                      </Flex>
+                    </AspectRatio>
+                  </Upload>
+                ) : (
+                  <Box
+                    borderRadius={"md"}
+                    // borderWidth={2}
+                    borderColor={"gray.600"}
+                    bgColor={"blackAlpha.500"}
+                  >
+                    <Image
+                      imgStyle={{
+                        width: "200px",
+                        height: "calc(150px - 8px)",
+                        objectFit: "contain",
+                      }}
+                      src={rtSample}
+                    />
+                  </Box>
+                )}
+              </AspectRatio>
             </VStack>
           </Flex>
         </Flex>

@@ -9,6 +9,7 @@ import {
 import { useEffect, useState, useRef } from "react";
 import "cropperjs/dist/cropper.css";
 import Cropper from "cropperjs";
+import { ImgObj } from "../vite-env";
 
 //预设颜色
 ///* TODO: 未来可以支持多种布局，如并列、网格... 相应改样式并分配不同的框色*/
@@ -25,7 +26,7 @@ const colors = [
 interface ImgWindowProps {
   id: string;
   dName: string;
-  imgs: string[];
+  imgs: ImgObj[];
   zoomLevel: number;
   reload: boolean;
 }
@@ -112,7 +113,7 @@ export default function ImgWindow(props: ImgWindowProps) {
         <Image
           minH={0}
           objectFit={"contain"}
-          src={props.imgs[page - 1]}
+          src={props.imgs[page - 1].url}
           ref={imageRef}
           alt="Cropper"
           position={"relative"}

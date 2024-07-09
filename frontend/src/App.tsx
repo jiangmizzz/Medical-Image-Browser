@@ -16,7 +16,7 @@ import {
   ButtonGroup,
   IconButton,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import ZoomControl from "./components/ZoomControl";
 import Tag from "./components/Tag";
@@ -27,7 +27,7 @@ import ImgDir from "./components/ImgDir";
 import { useFileStore } from "./stores/filesStore";
 import { useCountStore } from "./stores/countStore";
 import { useToast } from "@chakra-ui/react";
-import { DirType } from "./vite-env";
+import { DirType, ESData, ImgObj } from "./vite-env";
 import ImgWindow from "./components/ImgWindow";
 import { Empty, Image, Upload } from "@douyinfe/semi-ui";
 import {
@@ -118,10 +118,60 @@ function App() {
   const [rtSample, setRtSample] = useState<string | null>(null); //实时样本图片
   const [displayMode, setMode] = useState<ModeType>("single");
 
+  useEffect(() => {
+    // 创建 eventsource 实例
+    const source = new EventSource("http://localhost:8080/listen");
+    const regex = /\/public\/[^ ]*/g; //有效路径为/public/...部分
+    // 监听开启时的回调函数
+    source.onopen = function () {
+      console.log("Connection to server opened.");
+    };
+    // 监听 'message' 事件
+    source.onmessage = function (event) {
+      const eventData: ESData = JSON.parse(event.data);
+      const pathMatch = eventData.dirPath.match(regex);
+      console.log(eventData);
+      if (eventData.event === "addDir") {
+        //添加文件夹,分为父文件夹，后子文件夹
+        //TODO:所有文件夹均以相等方式存放，但在列表渲染时过滤图片数为0的文件夹
+        if (pathMatch && pathMatch.length > 0) {
+          const path = pathMatch[pathMatch.length - 1].replace(
+            /^\/public\//,
+            ""
+          ); //以 /public 开头的有效文件路径，再去掉/public/
+          if (path.includes("/")) {
+            //存在父文件夹
+            const father = path.slice(0, path.indexOf("/")); //提取父文件夹名
+            fileStore.addDir({ dName: path, fatherDName: father, imgs: [] });
+          } else {
+            //无父文件夹
+            fileStore.addDir({ dName: path, fatherDName: path, imgs: [] });
+          }
+        }
+        // fileStore.addDir({dName: filePath})
+      } else if (eventData.event === "add") {
+        //TODO:往文件夹里添加文件，一般在 addDir 之后，按生成顺序添加
+        const id = "tempId"; //TODO: 通过dName寻找id
+        const imgUrlStart = eventData.dirPath.lastIndexOf("/");
+        const imgUrl = eventData.dirPath.slice(imgUrlStart + 1);
+        fileStore.appendDir(id, { order: 0, url: imgUrl }); //TODO:分配 order
+      }
+    };
+    // 监听 'error' 事件
+    source.onerror = function (event) {
+      if (event.eventPhase === EventSource.CLOSED) {
+        console.log("Connection to server closed.");
+      } else {
+        console.error("Error occurred:", event);
+      }
+    };
+  }, [fileStore]);
+
   //上传图片文件到 store 中
-  function handleUpload(imgs: string[]) {
+  function handleUpload(imgs: ImgObj[]) {
     fileStore.addDir({
       dName: "ImgGroup " + countStore.increment(),
+      fatherDName: "ImgGroup " + countStore.increment(),
       imgs: imgs,
     });
     toast({
@@ -182,8 +232,9 @@ function App() {
                     key={dir.id}
                     id={dir.id}
                     dName={dir.dName}
+                    fatherDName={dir.fatherDName}
                     type="img"
-                    cover={dir.imgs[0]}
+                    cover={dir.imgs[0].url}
                     imgNum={dir.imgs.length}
                     isSelected={
                       selectedDir !== null && dir.id === selectedDir.id

@@ -18,7 +18,6 @@
     "@emotion/styled": "^11.11.5",
     "@types/uuid": "^9.0.8",
     "cropperjs": "^1.6.2",
-    "chokidar": "^3.6.0",
     "framer-motion": "^11.2.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

@@ -1,5 +1,5 @@
-import { AddIcon } from "@chakra-ui/icons";
-import { DirType } from "../vite-env";
+import { AddIcon, CheckIcon, EditIcon } from "@chakra-ui/icons";
+import { DirType, ImgObj } from "../vite-env";
 import {
   AspectRatio,
   Badge,
@@ -7,8 +7,10 @@ import {
   Flex,
   HStack,
   Image,
+  Input,
   Text,
   VStack,
+  useToast,
 } from "@chakra-ui/react";
 import { CloseButton } from "@chakra-ui/react";
 import { Upload } from "@douyinfe/semi-ui";
@@ -23,29 +25,45 @@ interface ImgDirProps extends Omit<DirType, "imgs"> {
   isSelected: boolean; //是否被选中
   onSelect: () => void; //选中展示当前图片组
   onDelete: () => void; //删除当前图片组
+  onEditDName: (newName: string) => void; //修改图片组名称
 }
 
 interface AddProps {
   type: "add";
-  onUpload: (imgs: string[]) => void;
+  onUpload: (imgs: ImgObj[]) => void;
 }
 
 export default function ImgDir(props: ImgDirProps | AddProps) {
+  const toast = useToast();
   const [showClose, setShowClose] = useState<boolean>(false);
-  const [imgArray, setImgArray] = useState<
-    {
-      order: number;
-      img: string;
-    }[]
-  >([]); //图片列表
+  const [imgArray, setImgArray] = useState<ImgObj[]>([]); //图片列表
   const [isPreview, setPreview] = useState<boolean>(false);
+  const [isEdit, setEdit] = useState<boolean>(false);
+  const [dName, setDName] = useState<string>(
+    props.type === "img" ? props.dName : ""
+  );
 
   // 依次处理上传的图片文件，基于文件名排序
   const handleUpload = ({ file }: { file: FileItem }) => {
-    const order: number = parseInt(file.name.match(/=(\d+)\./)![1], 10);
-    setImgArray((prevImgs) => {
-      return [...prevImgs, { order: order, img: file.url! }];
-    });
+    const regex = /=(\d+)\./;
+    const match = file.name.match(regex);
+    if (match && match.length != 0) {
+      const order: number = parseInt(match[1], 10);
+      setImgArray((prevImgs) => {
+        return [...prevImgs, { order: order, url: file.url! }];
+      });
+    } else {
+      toast({
+        //TODO:限制最大显示 toast 数量
+        title: "Imgs imported!",
+        description: `The names of the images are not follow the rule: ${regex}`,
+        status: "warning",
+        variant: "subtle",
+        duration: 2000,
+        position: "top",
+        isClosable: true,
+      });
+    }
   };
 
   // 添加文件夹
@@ -61,7 +79,7 @@ export default function ImgDir(props: ImgDirProps | AddProps) {
         return 0;
       });
       //转化成 string[]
-      props.onUpload(sortedImgs.map((file) => file.img));
+      props.onUpload(sortedImgs);
       setImgArray([]);
     }
   }
@@ -119,17 +137,55 @@ export default function ImgDir(props: ImgDirProps | AddProps) {
             {props.imgNum}
           </Badge>
         </Flex>
-        <Text
-          as={"b"}
-          fontSize="md"
-          color={"white"}
-          maxWidth={210}
-          overflow={"hidden"}
-          whiteSpace={"nowrap"}
-          textOverflow={"ellipsis"}
-        >
-          {props.dName}
-        </Text>
+        <Flex gap={3} alignItems={"center"}>
+          {isEdit ? (
+            <Input
+              size={"sm"}
+              fontSize={"md"}
+              fontWeight={"bold"}
+              textColor={"white"}
+              maxWidth={180}
+              autoFocus
+              value={dName}
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+              onChange={(e) => {
+                setDName(e.target.value);
+              }}
+            />
+          ) : (
+            <Text
+              as={"b"}
+              fontSize="md"
+              color={"white"}
+              maxWidth={180}
+              overflow={"hidden"}
+              whiteSpace={"nowrap"}
+              textOverflow={"ellipsis"}
+            >
+              {props.dName}
+            </Text>
+          )}
+          {isEdit ? (
+            <CheckIcon
+              color={"gray.500"}
+              onClick={(e) => {
+                e.stopPropagation();
+                props.onEditDName(dName);
+                setEdit(false);
+              }}
+            />
+          ) : (
+            <EditIcon
+              color={"gray.500"}
+              onClick={(e) => {
+                e.stopPropagation();
+                setEdit(true);
+              }}
+            />
+          )}
+        </Flex>
       </Flex>
     );
   else
@@ -160,7 +216,7 @@ export default function ImgDir(props: ImgDirProps | AddProps) {
                 <HStack onClick={(e) => e.stopPropagation()}>
                   <VStack>
                     <ImagePreview
-                      src={imgArray.map((file) => file.img)}
+                      src={imgArray.map((file) => file.url)}
                       visible={isPreview}
                       onVisibleChange={(v) => setPreview(v)}
                     >
@@ -168,7 +224,7 @@ export default function ImgDir(props: ImgDirProps | AddProps) {
                         w={100}
                         h={100}
                         objectFit={"contain"}
-                        src={imgArray[0].img}
+                        src={imgArray[0].url}
                         onClick={() => setPreview(true)}
                       />
                     </ImagePreview>

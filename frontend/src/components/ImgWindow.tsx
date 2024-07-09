@@ -9,6 +9,7 @@ import {
 import { useEffect, useState, useRef } from "react";
 import "cropperjs/dist/cropper.css";
 import Cropper from "cropperjs";
+import { ImgObj } from "../vite-env";
 
 //预设颜色
 ///* TODO: 未来可以支持多种布局，如并列、网格... 相应改样式并分配不同的框色*/
@@ -25,7 +26,7 @@ const colors = [
 interface ImgWindowProps {
   id: string;
   dName: string;
-  imgs: string[];
+  imgs: ImgObj[];
   zoomLevel: number;
   reload: boolean;
 }
@@ -88,11 +89,12 @@ export default function ImgWindow(props: ImgWindowProps) {
       h={"90%"}
       columnGap={3}
       alignItems={"center"}
-      overflowY={"auto"}
-      overflowX={"hidden"}
+      // overflowY={"auto"}
+      // overflowX={"hidden"}
     >
       <Box
         position={"relative"}
+        zIndex={10}
         alignSelf={"start"}
         borderRadius={"md"}
         bgColor={"blackAlpha.300"}
@@ -103,24 +105,33 @@ export default function ImgWindow(props: ImgWindowProps) {
         alignItems={"center"}
         px={2}
       >
-        <Text as={"b"} color={"whiteAlpha.700"} ml={2}>
+        <Text as={"b"} color={"whiteAlpha.700"}>
           {props.dName}
         </Text>
       </Box>
+      <Box w={"90%"} h={"90%"}>
+        <Image
+          minH={0}
+          objectFit={"contain"}
+          src={props.imgs[page - 1].url}
+          ref={imageRef}
+          alt="Cropper"
+          position={"relative"}
+          zIndex={5}
+          // style={{
+          //   display: "none",
+          // }}
+        />
+      </Box>
 
-      <Image
+      <Flex
+        flex={1}
         w={"100%"}
-        h={"90%"}
-        minH={0}
-        objectFit={"contain"}
-        src={props.imgs[page - 1]}
-        ref={imageRef}
-        alt="Cropper"
-        style={{
-          display: "none",
-        }}
-      />
-      <Flex flex={1} w={"100%"} justify={"center"} align={"end"}>
+        justify={"center"}
+        align={"end"}
+        position={"relative"}
+        zIndex={10}
+      >
         {/* <Tag justifySelf={"start"}>{props.dName}</Tag> */}
         <Slider
           aria-label="page-slider"

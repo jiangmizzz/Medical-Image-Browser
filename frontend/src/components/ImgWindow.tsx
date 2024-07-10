@@ -9,6 +9,8 @@ import {
 import { useEffect, useState, useRef } from "react";
 import "cropperjs/dist/cropper.css";
 import Cropper from "cropperjs";
+import RulerComponent from "./Ruler";
+// import MeasureComponent from "./MeasureComponent";
 
 //预设颜色
 ///* TODO: 未来可以支持多种布局，如并列、网格... 相应改样式并分配不同的框色*/
@@ -28,32 +30,71 @@ interface ImgWindowProps {
   imgs: string[];
   zoomLevel: number;
   reload: boolean;
+  setZoomLevel: (zoom: number) => void;
+  measure: boolean;
+}
+
+interface CropData {
+  x: number;
+  y: number;
+  height: number;
+  width: number;
 }
 
 export default function ImgWindow(props: ImgWindowProps) {
   const imageRef = useRef<HTMLImageElement>(null);
   const [lastZoomLevel, setLastZoomLevel] = useState<number>(1);
   const [cropperInstance, setCropperInstance] = useState<Cropper | null>(null);
-
+  const [cropData, setCropData] = useState<CropData | null>(null);
   const [page, setPage] = useState(1);
+  const [scale, setScale] = useState(1);
+  const [measure, setMeasure] = useState(false);
   useEffect(() => {
     setPage(1);
-  }, [props.id, props.reload]);
+    setCropData(null);
+  }, [props.id]);
+
+  useEffect(() => {
+    setPage(page);
+    setCropData(null);
+  }, [props.reload]);
+
+  useEffect(() => {
+    setMeasure(props.measure);
+  }, [props.measure]);
 
   useEffect(() => {
     if (imageRef.current) {
       const newCropper = new Cropper(imageRef.current, {
-        aspectRatio: 1,
+        aspectRatio: NaN,
         dragMode: "move",
-        cropBoxMovable: false,
+        cropBoxMovable: true,
         modal: false,
         guides: false,
-        highlight: false,
+        highlight: true,
+        zoomOnWheel: false,
         background: false,
         center: false,
         autoCrop: false,
         autoCropArea: 1,
         viewMode: 0,
+        crop: () => {
+          const cropD = newCropper.getData();
+          const data = newCropper.getCropBoxData();
+          setCropData({
+            height: cropD.height,
+            width: cropD.width,
+            x: data.left,
+            y: data.top,
+          });
+          // setScale(cropD.width / data.width);
+          const imageD = newCropper.getImageData();
+          setScale(imageD.naturalWidth / imageD.width);
+        },
+        ready: () => {
+          const imageD = newCropper.getImageData();
+          setScale(imageD.naturalWidth / imageD.width);
+        },
       });
 
       setCropperInstance(newCropper);
@@ -108,7 +149,26 @@ export default function ImgWindow(props: ImgWindowProps) {
           {props.dName}
         </Text>
       </Box>
-      <Box w={"90%"} h={"90%"}>
+      <Box
+        position={"relative"}
+        zIndex={10}
+        alignSelf={"start"}
+        borderRadius={"md"}
+        bgColor={"blackAlpha.300"}
+        h={8}
+        mb={-8}
+        marginTop={10}
+        display={"flex"}
+        justifyContent={"center"}
+        alignItems={"center"}
+        px={2}
+      >
+        <Text as={"b"} color={"whiteAlpha.700"}>
+          Zoom rate: {props.zoomLevel}
+        </Text>
+      </Box>
+
+      <Box w={"80%"} h={"80%"}>
         <Image
           minH={0}
           objectFit={"contain"}
@@ -121,7 +181,43 @@ export default function ImgWindow(props: ImgWindowProps) {
           //   display: "none",
           // }}
         />
+        {cropData !== null && cropData.width !== 0 && cropData.height !== 0 && (
+          <Text
+            position="absolute"
+            top={`${cropData.y + 130}px`}
+            left={`${cropData.x + 405}px`}
+            color="white"
+            bg="black"
+            fontSize="12px"
+            padding="2"
+            borderRadius="5px"
+            zIndex={10}
+          >
+            width: {cropData.width.toFixed(2)}px, height:{" "}
+            {cropData.height.toFixed(2)}px
+          </Text>
+        )}
       </Box>
+      {measure === true && (
+        <Box
+          position={"relative"}
+          zIndex={10}
+          alignSelf={"start"}
+          borderRadius={"md"}
+          bgColor={"blackAlpha.300"}
+          h={8}
+          mb={-8}
+          marginTop={10}
+          display={"flex"}
+          justifyContent={"center"}
+          alignItems={"start"}
+          px={2}
+        >
+          <Text as={"b"} color={"whiteAlpha.700"} marginTop={2}>
+            <RulerComponent zoomLevel={1 / scale} />
+          </Text>
+        </Box>
+      )}
 
       <Flex
         flex={1}
@@ -139,7 +235,11 @@ export default function ImgWindow(props: ImgWindowProps) {
           max={props.imgs.length}
           value={page}
           mb={2}
-          onChange={(val) => setPage(val)}
+          onChange={(val) => {
+            setPage(val);
+            props.setZoomLevel(1);
+            setCropData(null);
+          }}
         >
           <SliderMark
             value={page}

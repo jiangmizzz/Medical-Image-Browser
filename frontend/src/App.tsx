@@ -57,7 +57,7 @@ function BoxHeader(
         mode: ModeType;
         changeMode: (mode: ModeType) => void;
       }
-  )
+  ),
 ) {
   return (
     <Center
@@ -117,6 +117,7 @@ function App() {
   const [selectedDir, setSelected] = useState<DirType | null>(null);
   const [rtSample, setRtSample] = useState<string | null>(null); //实时样本图片
   const [displayMode, setMode] = useState<ModeType>("single");
+  const [measure, setMeasure] = useState<boolean>(false);
 
   useEffect(() => {
     // 创建 eventsource 实例
@@ -292,6 +293,8 @@ function App() {
                   {...selectedDir}
                   zoomLevel={zoomLevel}
                   reload={reload}
+                  setZoomLevel={setZoomLevel}
+                  measure={measure}
                 />
               )}
             </HStack>
@@ -312,10 +315,12 @@ function App() {
                   setZoomLevel={setZoomLevel}
                 />
               </GridItem>
-              <Reload reload={reload} setReload={setReload} />
-              <Tag />
-              <Edit />
-              <Measure />
+              <Reload
+                reload={reload}
+                setReload={setReload}
+                setZoom={setZoomLevel}
+              />
+              <Measure m={measure} setM={setMeasure} />
             </Grid>
             <Divider />
             <VStack>

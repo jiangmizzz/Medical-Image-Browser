@@ -15,12 +15,11 @@ const ZoomControl: React.FC<ZoomControlProps> = ({
 }) => {
   const handleZoomIn = () => {
     // 每次放大10%应该够吧
-    setZoomLevel(zoomLevel + 0.1);
+    setZoomLevel(Math.round((zoomLevel + 0.1) * 10) / 10);
   };
 
   const handleZoomOut = () => {
-    // 下限10%
-    setZoomLevel(Math.max(0.1, zoomLevel - 0.1));
+    setZoomLevel(Math.round(Math.max(0.1, zoomLevel - 0.1) * 10) / 10);
   };
 
   return (

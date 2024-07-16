@@ -64,7 +64,7 @@ const RulerComponent: React.FC<RulerProps> = ({ zoomLevel }) => {
         .append("text")
         .attr("x", 60)
         .attr("y", 13)
-        .text(`${actualLength.toFixed(2)} px`)
+        .text(`${((actualLength * 16) / 808).toFixed(2)} mm`)
         .attr("fill", "gray");
     }
   }, [rulerLength, zoomLevel, svgRef]);

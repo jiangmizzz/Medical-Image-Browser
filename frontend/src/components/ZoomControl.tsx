@@ -24,18 +24,38 @@ const ZoomControl: React.FC<ZoomControlProps> = ({
 
   return (
     <HStack spacing={7}>
-      <IconButton
-        aria-label="Zoom In"
-        onClick={handleZoomIn}
-        icon={<Icon as={ZoomInOutlined} />}
-        colorScheme="teal"
-      />
-      <IconButton
-        aria-label="Zoom Out"
-        onClick={handleZoomOut}
-        icon={<Icon as={ZoomOutOutlined} />}
-        colorScheme="teal"
-      />
+      {zoomLevel > 1.0 ? (
+        <IconButton
+          aria-label="Zoom In"
+          onClick={handleZoomIn}
+          icon={<Icon as={ZoomInOutlined} />}
+          colorScheme="teal"
+        />
+      ) : (
+        <IconButton
+          aria-label="Zoom In"
+          onClick={handleZoomIn}
+          icon={<Icon as={ZoomInOutlined} />}
+          colorScheme="teal"
+          variant={"outline"}
+        />
+      )}
+      {zoomLevel < 1.0 ? (
+        <IconButton
+          aria-label="Zoom Out"
+          onClick={handleZoomOut}
+          icon={<Icon as={ZoomOutOutlined} />}
+          colorScheme="teal"
+        />
+      ) : (
+        <IconButton
+          aria-label="Zoom Out"
+          onClick={handleZoomOut}
+          icon={<Icon as={ZoomOutOutlined} />}
+          colorScheme="teal"
+          variant={"outline"}
+        />
+      )}
     </HStack>
   );
 };

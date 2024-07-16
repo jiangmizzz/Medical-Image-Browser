@@ -12,6 +12,7 @@ import Cropper from "cropperjs";
 import RulerComponent from "./Ruler";
 // import MeasureComponent from "./MeasureComponent";
 import { ImgObj } from "../vite-env";
+import MeasureComponent from "./MeasureComponent";
 
 //预设颜色
 ///* TODO: 未来可以支持多种布局，如并列、网格... 相应改样式并分配不同的框色*/
@@ -33,6 +34,8 @@ interface ImgWindowProps {
   reload: boolean;
   setZoomLevel: (zoom: number) => void;
   measure: boolean;
+  edit: boolean;
+  drag: boolean;
 }
 
 interface CropData {
@@ -42,11 +45,31 @@ interface CropData {
   width: number;
 }
 
+interface ImageData {
+  top: number;
+  left: number;
+  width: number;
+  height: number;
+  naturalWidth: number;
+  naturalHeight: number;
+}
+
+interface CanvasData {
+  top: number;
+  left: number;
+  width: number;
+  height: number;
+  naturalWidth: number;
+  naturalHeight: number;
+}
+
 export default function ImgWindow(props: ImgWindowProps) {
   const imageRef = useRef<HTMLImageElement>(null);
   const [lastZoomLevel, setLastZoomLevel] = useState<number>(1);
   const [cropperInstance, setCropperInstance] = useState<Cropper | null>(null);
   const [cropData, setCropData] = useState<CropData | null>(null);
+  const [imageData, setImageData] = useState<ImageData | null>(null);
+  const [canvasData, setCanvasData] = useState<CanvasData | null>(null);
   const [page, setPage] = useState(1);
   const [scale, setScale] = useState(1);
   const [measure, setMeasure] = useState(false);
@@ -63,6 +86,16 @@ export default function ImgWindow(props: ImgWindowProps) {
   useEffect(() => {
     setMeasure(props.measure);
   }, [props.measure]);
+
+  useEffect(() => {
+    if (cropperInstance) {
+      if (props.edit === true) {
+        cropperInstance.setDragMode("none");
+      } else if (props.drag === true) {
+        cropperInstance.setDragMode("move");
+      }
+    }
+  }, [props.drag, props.edit]);
 
   useEffect(() => {
     if (imageRef.current) {
@@ -94,7 +127,25 @@ export default function ImgWindow(props: ImgWindowProps) {
         },
         ready: () => {
           const imageD = newCropper.getImageData();
+          const canvasD = newCropper.getCanvasData();
           setScale(imageD.naturalWidth / imageD.width);
+          setImageData({
+            top: imageD.top,
+            left: imageD.height,
+            width: imageD.width,
+            height: imageD.height,
+            naturalWidth: imageD.naturalWidth,
+            naturalHeight: imageD.naturalHeight,
+          });
+          setCanvasData({
+            top: canvasD.top,
+            left: canvasD.height,
+            width: canvasD.width,
+            height: canvasD.height,
+            naturalWidth: canvasD.naturalWidth,
+            naturalHeight: canvasD.naturalHeight,
+          });
+          // console.log(imageD, canvasD);
         },
       });
 
@@ -182,21 +233,50 @@ export default function ImgWindow(props: ImgWindowProps) {
           //   display: "none",
           // }}
         />
-        {cropData !== null && cropData.width !== 0 && cropData.height !== 0 && (
-          <Text
-            position="absolute"
-            top={`${cropData.y + 130}px`}
-            left={`${cropData.x + 405}px`}
-            color="white"
-            bg="black"
-            fontSize="12px"
-            padding="2"
-            borderRadius="5px"
-            zIndex={10}
-          >
-            width: {cropData.width.toFixed(2)}px, height:{" "}
-            {cropData.height.toFixed(2)}px
-          </Text>
+        {imageData?.naturalWidth === imageData?.naturalHeight &&
+          cropData !== null &&
+          cropData.width !== 0 &&
+          cropData.height !== 0 && (
+            <Text
+              position="absolute"
+              top={`${cropData.y + 130}px`}
+              left={`${cropData.x + 405}px`}
+              color="white"
+              bg="black"
+              fontSize="12px"
+              padding="2"
+              borderRadius="5px"
+              zIndex={10}
+            >
+              width: {((cropData.width * 16) / 808).toFixed(2)}mm, height:{" "}
+              {((cropData.height * 16) / 808).toFixed(2)}mm
+            </Text>
+          )}
+        {imageData?.naturalWidth !== imageData?.naturalHeight &&
+          cropData !== null &&
+          cropData.width !== 0 &&
+          cropData.height !== 0 && (
+            <Text
+              position="absolute"
+              top={`${cropData.y + 130}px`}
+              left={`${cropData.x + 405}px`}
+              color="white"
+              bg="black"
+              fontSize="12px"
+              padding="2"
+              borderRadius="5px"
+              zIndex={10}
+            >
+              width: {((cropData.width * 16) / 808).toFixed(2)}mm, height:{" "}
+              {((cropData.height * 3.55) / 1024).toFixed(2)}mm
+            </Text>
+          )}
+        {props.edit === true && imageData !== null && canvasData !== null && (
+          <MeasureComponent
+            imageData={imageData}
+            canvasData={canvasData}
+            scale={scale}
+          />
         )}
       </Box>
       {measure === true && (

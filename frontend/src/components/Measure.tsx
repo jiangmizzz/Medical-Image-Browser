@@ -8,7 +8,7 @@ interface MeasureProps {
 }
 
 const Measure: React.FC<MeasureProps> = ({ m, setM }) => {
-  return (
+  return m === true ? (
     <Box>
       <IconButton
         aria-label="Measure"
@@ -18,6 +18,19 @@ const Measure: React.FC<MeasureProps> = ({ m, setM }) => {
         icon={<Icon as={MenuOutlined} />}
         colorScheme="teal"
         marginTop="8px"
+      />
+    </Box>
+  ) : (
+    <Box>
+      <IconButton
+        aria-label="Measure"
+        onClick={() => {
+          setM(!m);
+        }}
+        icon={<Icon as={MenuOutlined} />}
+        colorScheme="teal"
+        marginTop="8px"
+        variant={"outline"}
       />
     </Box>
   );

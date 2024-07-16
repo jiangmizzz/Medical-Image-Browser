@@ -19,6 +19,7 @@ const Reload: React.FC<ReloadProps> = ({ reload, setReload, setZoom }) => {
         }}
         icon={<Icon as={ReloadOutlined} />}
         colorScheme="teal"
+        variant="outline"
       />
     </Box>
   );

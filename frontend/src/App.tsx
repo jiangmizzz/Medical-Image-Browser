@@ -19,7 +19,6 @@ import {
 import { useEffect, useState } from "react";
 
 import ZoomControl from "./components/ZoomControl";
-import Tag from "./components/Tag";
 import Edit from "./components/Edit";
 import Reload from "./components/Reload";
 import Measure from "./components/Measure";
@@ -36,6 +35,7 @@ import {
 } from "@douyinfe/semi-illustrations";
 import { IconCamera, IconGridView, IconStop } from "@douyinfe/semi-icons";
 import type { FileItem } from "@douyinfe/semi-ui/lib/es/upload";
+import Drag from "./components/Drag";
 
 const boxCfg = {
   borderWidth: "1px",
@@ -57,7 +57,7 @@ function BoxHeader(
         mode: ModeType;
         changeMode: (mode: ModeType) => void;
       }
-  )
+  ),
 ) {
   return (
     <Center
@@ -117,6 +117,9 @@ function App() {
   const [selectedDir, setSelected] = useState<DirType | null>(null);
   const [rtSample, setRtSample] = useState<string | null>(null); //实时样本图片
   const [displayMode, setMode] = useState<ModeType>("single");
+  const [measure, setMeasure] = useState<boolean>(false);
+  const [edit, setEdit] = useState<boolean>(false);
+  const [drag, setDrag] = useState<boolean>(true);
 
   useEffect(() => {
     // 创建 eventsource 实例
@@ -137,7 +140,7 @@ function App() {
         if (pathMatch && pathMatch.length > 0) {
           const path = pathMatch[pathMatch.length - 1].replace(
             /^\/public\//,
-            ""
+            "",
           ); //以 /public 开头的有效文件路径，再去掉/public/
           if (path.includes("/")) {
             //存在父文件夹
@@ -205,6 +208,27 @@ function App() {
     const url = URL.createObjectURL(file.fileInstance);
     setRtSample(url);
   };
+
+  useEffect(() => {
+    if (edit === true && drag === true) {
+      setDrag(false);
+    } else if (edit === false && drag === false) {
+      setDrag(true);
+    }
+  }, [edit]);
+
+  useEffect(() => {
+    if (edit === true && drag === true) {
+      setEdit(false);
+    } else if (edit === false && drag === false) {
+      setEdit(true);
+    }
+  }, [drag]);
+
+  useEffect(() => {
+    setEdit(false);
+    setDrag(true);
+  }, [reload]);
 
   return (
     <>
@@ -292,6 +316,10 @@ function App() {
                   {...selectedDir}
                   zoomLevel={zoomLevel}
                   reload={reload}
+                  setZoomLevel={setZoomLevel}
+                  measure={measure}
+                  edit={edit}
+                  drag={drag}
                 />
               )}
             </HStack>
@@ -312,10 +340,14 @@ function App() {
                   setZoomLevel={setZoomLevel}
                 />
               </GridItem>
-              <Reload reload={reload} setReload={setReload} />
-              <Tag />
-              <Edit />
-              <Measure />
+              <Reload
+                reload={reload}
+                setReload={setReload}
+                setZoom={setZoomLevel}
+              />
+              <Measure m={measure} setM={setMeasure} />
+              <Drag drag={drag} setDrag={setDrag} />
+              <Edit edit={edit} setEdit={setEdit} />
             </Grid>
             <Divider />
             <VStack>

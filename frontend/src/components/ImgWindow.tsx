@@ -1,4 +1,4 @@
-import { Box, Flex, Image, Text } from "@chakra-ui/react";
+import { Box, Flex, Image, SimpleGrid, Text } from "@chakra-ui/react";
 import {
   Slider,
   SliderTrack,
@@ -15,7 +15,7 @@ import { ImgObj } from "../vite-env";
 import MeasureComponent from "./MeasureComponent";
 
 //预设颜色
-///* TODO: 未来可以支持多种布局，如并列、网格... 相应改样式并分配不同的框色*/
+///* TODO: 可以支持4个网格的布局模式... 相应改样式并分配不同的框色*/
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const colors = [
   "#dbbe9a",
@@ -31,6 +31,7 @@ interface ImgWindowProps {
   dName: string;
   imgs: ImgObj[];
   zoomLevel: number;
+  displayMode: "single" | "grid";
   reload: boolean;
   setZoomLevel: (zoom: number) => void;
   measure: boolean;
@@ -175,7 +176,7 @@ export default function ImgWindow(props: ImgWindowProps) {
       borderWidth={2}
       borderStyle={"dashed"}
       borderRadius={"md"}
-      borderColor={"cyan.800"}
+      borderColor={"#5bcce7"}
       bgColor={"blackAlpha.400"}
       w={"90%"}
       h={"90%"}
@@ -197,9 +198,7 @@ export default function ImgWindow(props: ImgWindowProps) {
         alignItems={"center"}
         px={2}
       >
-        <Text as={"b"} color={"whiteAlpha.700"}>
-          {props.dName}
-        </Text>
+        <Text color={"#5bcce7"}>{props.dName}</Text>
       </Box>
       <Box
         position={"relative"}
@@ -215,24 +214,58 @@ export default function ImgWindow(props: ImgWindowProps) {
         alignItems={"center"}
         px={2}
       >
-        <Text as={"b"} color={"whiteAlpha.700"}>
-          Zoom rate: {props.zoomLevel}
-        </Text>
+        <Text color={"#5bcce7"}>Zoom rate: {props.zoomLevel}</Text>
       </Box>
 
-      <Box w={"80%"} h={"80%"}>
-        <Image
-          minH={0}
-          objectFit={"contain"}
-          src={props.imgs[page - 1].url}
-          ref={imageRef}
-          alt="Cropper"
-          position={"relative"}
-          zIndex={5}
-          // style={{
-          //   display: "none",
-          // }}
-        />
+      <Box w={"80%"} h={"80%"} overflow={"hidden"}>
+        {props.displayMode === "single" &&
+          (page > props.imgs.length ? (
+            <Image
+              minH={0}
+              objectFit={"contain"}
+              src={props.imgs[props.imgs.length - 1].url}
+              ref={imageRef}
+              alt="Cropper"
+              position={"relative"}
+              zIndex={5}
+            />
+          ) : (
+            <Image
+              minH={0}
+              objectFit={"contain"}
+              src={props.imgs[page - 1].url}
+              ref={imageRef}
+              alt="Cropper"
+              position={"relative"}
+              zIndex={5}
+            />
+          ))}
+        {props.displayMode === "grid" && (
+          <SimpleGrid w={"100%"} h={"100%"} columns={2} spacing={5}>
+            {page > props.imgs.length ? (
+              <Image
+                minH={0}
+                objectFit={"contain"}
+                src={props.imgs[props.imgs.length - 1].url}
+                ref={imageRef}
+                alt="Cropper1"
+                position={"relative"}
+                zIndex={5}
+              />
+            ) : (
+              <Image
+                minH={0}
+                objectFit={"contain"}
+                src={props.imgs[page - 1].url}
+                ref={imageRef}
+                alt="Cropper1"
+                position={"relative"}
+                zIndex={5}
+              />
+            )}
+          </SimpleGrid>
+        )}
+
         {imageData?.naturalWidth === imageData?.naturalHeight &&
           cropData !== null &&
           cropData.width !== 0 &&
@@ -325,7 +358,7 @@ export default function ImgWindow(props: ImgWindowProps) {
           <SliderMark
             value={page}
             textAlign="center"
-            bg="blue.500"
+            bg="#0844b2"
             color="white"
             mt="-10"
             ml="-7"
@@ -335,7 +368,7 @@ export default function ImgWindow(props: ImgWindowProps) {
             {page + "/" + props.imgs.length}
           </SliderMark>
           <SliderTrack>
-            <SliderFilledTrack />
+            <SliderFilledTrack bg={"#8dcaf1"} />
           </SliderTrack>
           <SliderThumb />
         </Slider>

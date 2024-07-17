@@ -53,16 +53,20 @@ export default function ImgDir(props: ImgDirProps | AddProps) {
         return [...prevImgs, { order: order, url: file.url! }];
       });
     } else {
-      toast({
-        //TODO:限制最大显示 toast 数量
-        title: "Imgs imported!",
-        description: `The names of the images are not follow the rule: ${regex}`,
-        status: "warning",
-        variant: "subtle",
-        duration: 2000,
-        position: "top",
-        isClosable: true,
-      });
+      const id = "single-toast";
+      if (!toast.isActive(id)) {
+        toast({
+          id,
+          //限制最大显示 toast 数量
+          title: "Imgs imported!",
+          description: `The names of the images are not follow the rule: ${regex}`,
+          status: "warning",
+          variant: "subtle",
+          duration: 2000,
+          position: "top",
+          isClosable: true,
+        });
+      }
     }
   };
 
@@ -91,12 +95,12 @@ export default function ImgDir(props: ImgDirProps | AddProps) {
         p={3}
         borderWidth={props.isSelected ? 2 : 1}
         borderRadius={"md"}
-        borderColor={props.isSelected ? "teal.100" : "gray.600"}
+        borderColor={props.isSelected ? "#5acbe6" : "#3a3f99"}
         bgColor={"blackAlpha.400"}
         rowGap={1}
         cursor={"pointer"}
         _hover={{
-          borderColor: props.isSelected ? "teal.100" : "gray.300",
+          borderColor: props.isSelected ? "#5acbe6" : "#90cdf4",
           bgColor: "blackAlpha.500",
         }}
         onClick={() => props.onSelect()}

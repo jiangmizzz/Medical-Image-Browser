@@ -38,7 +38,7 @@ const RulerComponent: React.FC<RulerProps> = ({ zoomLevel }) => {
         .append("path")
         .data([line1])
         .attr("d", line)
-        .attr("stroke", "teal")
+        .attr("stroke", "#5acbe6")
         .attr("stroke-width", 2)
         .attr("fill", "none");
 
@@ -46,7 +46,7 @@ const RulerComponent: React.FC<RulerProps> = ({ zoomLevel }) => {
         .append("path")
         .data([line2])
         .attr("d", line)
-        .attr("stroke", "teal")
+        .attr("stroke", "#5acbe6")
         .attr("stroke-width", 2)
         .attr("fill", "none");
 
@@ -54,7 +54,7 @@ const RulerComponent: React.FC<RulerProps> = ({ zoomLevel }) => {
         .append("path")
         .data([line3])
         .attr("d", line)
-        .attr("stroke", "teal")
+        .attr("stroke", "#5acbe6")
         .attr("stroke-width", 2)
         .attr("fill", "none");
 

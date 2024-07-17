@@ -14,6 +14,7 @@ const Edit: React.FC<EditProps> = ({ edit, setEdit }) => {
         aria-label="Edit"
         icon={<Icon as={EditOutlined} />}
         colorScheme="teal"
+        color={"#5bcce7"}
         marginTop="8px"
         onClick={() => setEdit(!edit)}
         variant={"outline"}
@@ -24,7 +25,8 @@ const Edit: React.FC<EditProps> = ({ edit, setEdit }) => {
       <IconButton
         aria-label="Edit"
         icon={<Icon as={EditOutlined} />}
-        colorScheme="teal"
+        // colorScheme="teal"
+        bgColor={"#5bcce7"}
         marginTop="8px"
         onClick={() => setEdit(!edit)}
       />

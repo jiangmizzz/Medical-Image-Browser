@@ -9,7 +9,7 @@ export const useFileStore = create<DirsState>((set, get) => ({
     const newId: string = uuidv4();
     set((prevDirs) => ({
       dirs: [...prevDirs.dirs, { ...newDir, id: newId }],
-      dirMap: prevDirs.dirMap.set(newDir.dName, newId),
+      dirMap: prevDirs.dirMap.set(newId, newDir.dName),
     }));
     return newId;
   },
@@ -20,13 +20,26 @@ export const useFileStore = create<DirsState>((set, get) => ({
       set((prevState) => ({
         dirs: prevState.dirs.map((dir, id) => {
           if (id === idx) {
-            return { ...dir, imgs: dir.imgs.concat(img) };
+            const newImgs = dir.imgs;
+            if (
+              !(
+                (
+                  newImgs.filter((previmg) => previmg.order === img.order)
+                    .length > 0
+                ) //对于多次发送的msg，进行图片去重
+              )
+            ) {
+              newImgs.push(img);
+              newImgs.sort((img1, img2) => img1.order - img2.order);
+            }
+            return { ...dir, imgs: [...newImgs] };
           } else {
             return { ...dir };
           }
         }),
       }));
     }
+    return idx;
   },
   //删除文件夹
   deleteDir: (id: string) => {

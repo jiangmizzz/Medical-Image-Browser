@@ -16,7 +16,8 @@ const Measure: React.FC<MeasureProps> = ({ m, setM }) => {
           setM(!m);
         }}
         icon={<Icon as={MenuOutlined} />}
-        colorScheme="teal"
+        // colorScheme="teal"
+        bgColor={"#5bcce7"}
         marginTop="8px"
       />
     </Box>
@@ -29,6 +30,7 @@ const Measure: React.FC<MeasureProps> = ({ m, setM }) => {
         }}
         icon={<Icon as={MenuOutlined} />}
         colorScheme="teal"
+        color={"#5bcce7"}
         marginTop="8px"
         variant={"outline"}
       />

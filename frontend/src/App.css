@@ -18,7 +18,7 @@ body {
     align-items: center;
     justify-content: space-between;
     padding: 0 2em 0 1em;
-    background-color: black;
+    background-color: #041c4a;
 }
 .app-logo{
     display: flex;

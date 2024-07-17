@@ -14,6 +14,7 @@ const Drag: React.FC<DragProps> = ({ drag, setDrag }) => {
         aria-label="Edit"
         icon={<Icon as={DragOutlined} />}
         colorScheme="teal"
+        color={"#5bcce7"}
         marginTop="8px"
         onClick={() => setDrag(!drag)}
         variant={"outline"}
@@ -24,7 +25,8 @@ const Drag: React.FC<DragProps> = ({ drag, setDrag }) => {
       <IconButton
         aria-label="Edit"
         icon={<Icon as={DragOutlined} />}
-        colorScheme="teal"
+        // colorScheme="teal"
+        bgColor={"#5bcce7"}
         marginTop="8px"
         onClick={() => setDrag(!drag)}
       />

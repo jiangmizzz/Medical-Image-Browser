@@ -29,7 +29,8 @@ const ZoomControl: React.FC<ZoomControlProps> = ({
           aria-label="Zoom In"
           onClick={handleZoomIn}
           icon={<Icon as={ZoomInOutlined} />}
-          colorScheme="teal"
+          bgColor={"#5bcce7"}
+          // colorScheme="teal"
         />
       ) : (
         <IconButton
@@ -37,6 +38,7 @@ const ZoomControl: React.FC<ZoomControlProps> = ({
           onClick={handleZoomIn}
           icon={<Icon as={ZoomInOutlined} />}
           colorScheme="teal"
+          color={"#5bcce7"}
           variant={"outline"}
         />
       )}
@@ -45,7 +47,8 @@ const ZoomControl: React.FC<ZoomControlProps> = ({
           aria-label="Zoom Out"
           onClick={handleZoomOut}
           icon={<Icon as={ZoomOutOutlined} />}
-          colorScheme="teal"
+          // colorScheme="teal"
+          bgColor={"#5bcce7"}
         />
       ) : (
         <IconButton
@@ -53,6 +56,7 @@ const ZoomControl: React.FC<ZoomControlProps> = ({
           onClick={handleZoomOut}
           icon={<Icon as={ZoomOutOutlined} />}
           colorScheme="teal"
+          color={"#5bcce7"}
           variant={"outline"}
         />
       )}
